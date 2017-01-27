@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/zhoutwo/RHIT-Club-App/issues"
   },
-  "homepage": "https://github.com/zhoutwo/RHIT-Club-App#readme"
+  "homepage": "https://github.com/zhoutwo/RHIT-Club-App#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "spdy": "^3.4.4",
+    "tedious": "^1.14.0"
+  }
 }

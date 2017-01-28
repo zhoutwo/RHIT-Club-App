@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/zhoutwo/RHIT-Club-App#readme",
   "dependencies": {
+    "body-parser": "^1.16.0",
     "express": "^4.14.0",
     "spdy": "^3.4.4",
     "tedious": "^1.14.0"

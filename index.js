@@ -3,6 +3,9 @@ const spdy = require('spdy');
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const bodyParser = require('body-parser');
+
+const auth = require('auth');
 
 const app = express();
 
@@ -10,6 +13,9 @@ const options = {
   key: fs.readFileSync(path.join(__dirname, '/cert/server.key')),
   cert:  fs.readFileSync(path.join(__dirname, '/cert/server.crt'))
 };
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('*', (req, res) => {
   res

@@ -198,6 +198,15 @@ function leaveClub(username, clubName) {
 }
 
 /*
+Gets the information about a club
+Uses the stored procedure 'getClubInformation'
+Returns a json of the club information including who is signed up and subscribed for the club
+*/
+function getClubInfo(clubName) {
+
+}
+
+/*
 Signs the user up for an event
 Uses the stored procedure 'signUserUpForEvent'
 Returns a string signifying the user has signed up for the event
@@ -254,8 +263,31 @@ Creates an event -> Must be club officer
 Uses the stored procedure 'createClubEvent'
 Returns a string signifying the event has been created
 */
-function createEvent(clubName, eventID, startTime, endTime, roomNumber, building) {
+function createEvent(clubName, startTime, endTime, roomNumber, building) {
+    return new Promise((resolve, reject) => {
+        var request = new Request('cancelClubEvent', function(err) {
+            if (err) {
+                return reject(err);
+            }
+            let eventID = Math.round(Math.random() * 1000000);
+            request.addParameter('club_name', TYPES.VarChar, clubName);
+            request.addParameter('event_id', TYPES.VarChar, eventID);
+            // Make sure these columns are named correctly
+            request.addParameter('time_start', TYPES.SmallDateTime, startTime);
+            request.addParameter('time_end', TYPES.SmallDateTime, endTime);
+            request.addParameter('room_number', TYPES.VarChar, roomNumber);
+            request.addParameter('building', TYPES.VarChar, building);
+            connection.callProcedure(request);
 
+            let done = true;
+            while (done) {
+                request.on('doneproc', function(rowCount, more, returnStatus, rows) {
+                    done = more;
+                });
+            }
+        });
+        return resolve("The club event has been cancelled");
+    });
 }
 
 /*
@@ -284,6 +316,15 @@ function cancelEvent(clubName, eventID) {
         });
         return resolve("The club event has been cancelled");
     });
+}
+
+/*
+Gets information about the event
+Uses stored procedure 'getEventInformation'
+Returns a json of all event info and who is attending
+*/
+function getEventInfo(eventID) {
+
 }
 
 /*

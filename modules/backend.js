@@ -198,6 +198,32 @@ function leaveClub(username, clubName) {
 }
 
 /*
+Unsubscribes the user from a club
+Uses the stored procedure 'unsubscribeClub'
+Returns a string notifying the user has been unsubscribed from the club
+*/
+function unsubscribeClub(username, clubName) {
+    return new Promise((resolve, reject) => {
+        var request = new Request('unsubscribeClub', function(err) {
+            if (err) {
+                return reject(err);
+            }
+            request.addParameter('rose_username', TYPES.VarChar, username);
+            request.addParameter('club_name', TYPES.VarChar, clubName);
+            connection.callProcedure(request);
+
+            let done = true;
+            while (done) {
+                request.on('doneproc', function(rowCount, more, returnStatus, rows) {
+                    done = more;
+                });
+            }
+        });
+        return resolve("User has unsubscribed from club");
+    });
+}
+
+/*
 Gets the information about a club
 Uses the stored procedure 'getClubInformation'
 Returns a json of the club information including who is signed up and subscribed for the club

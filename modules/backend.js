@@ -13,10 +13,10 @@ function isRegisterd(username) {
                 return reject(err);
             }
         });
-        request.addParameter('rose_username', TYPES.VarChar, usernam);
+        request.addParameter('rose_username', TYPES.VarChar, username);
         connection.callProcedure(request);
 
-        const done = false;
+        let done = false;
         const value = false;
         while (!done) {
             request.on('doneProc', function(rowCount, more, returnStatus, rows) {
@@ -54,7 +54,7 @@ function createUser(username, password, name) {
         request.addParameter('email', TYPES.VarChar, email);
         connection.callProcedure(request);
 
-        const done = false;
+        let done = false;
         while (!done) {
             request.on('doneProc', function(rowCount, more, returnStatus, rows) {
                 done = more;
@@ -89,7 +89,7 @@ function fetchUser(username) {
         request.addParameter('rose_username', TYPES.VarChar, username);
         connection.callProcedure(request);
 
-        const done = false;
+        let done = false;
         while (!done) {
             request.on('doneProc', function(rowCount, more, returnStatus, rows) {
                 done = more;
@@ -119,7 +119,7 @@ function signUpForClub(username, clubName) {
             request.addParameter('club_name', TYPES.VarChar, clubName);
             connection.callProcedure(request);
 
-            const done = false;
+            let done = false;
             while (!done) {
                 request.on('doneproc', function(rowCount, more, returnStatus, rows) {
                     done = more;
@@ -145,7 +145,7 @@ function subscribeToClub(username, clubName) {
             request.addParameter('club_name', TYPES.VarChar, clubName);
             connection.callProcedure(request);
 
-            const done = false;
+            let done = false;
             while (!done) {
                 request.on('doneproc', function(rowCount, more, returnStatus, rows) {
                     done = more;
@@ -171,7 +171,7 @@ function leaveClub(username, clubName) {
             request.addParameter('club_name', TYPES.VarChar, clubName);
             connection.callProcedure(request);
 
-            const done = false;
+            let done = false;
             while (!done) {
                 request.on('doneproc', function(rowCount, more, returnStatus, rows) {
                     done = more;

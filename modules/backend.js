@@ -3,8 +3,8 @@ const connection; // Addd connection here
 
 /*
 Checks if the user is already registerd
-Returns true if the user is registered, false if they are not
 Uses the stored procedure 'getUserRegistered'
+Returns true if the user is registered, false if they are not
 */
 function isRegisterd(username) {
     return new Promise((resolve, reject) => {
@@ -16,12 +16,12 @@ function isRegisterd(username) {
         request.addParameter('rose_username', TYPES.VarChar, username);
         connection.callProcedure(request);
 
-        let done = false;
+        let done = true;
         const value = false;
-        while (!done) {
+        while (done) {
             request.on('doneProc', function(rowCount, more, returnStatus, rows) {
                 done = more;
-                if (done) {
+                if (!done) {
                     value = !!returnStatus;
                 }
             });
@@ -54,11 +54,11 @@ function createUser(username, password, name) {
         request.addParameter('email', TYPES.VarChar, email);
         connection.callProcedure(request);
 
-        let done = false;
-        while (!done) {
+        let done = true;
+        while (done) {
             request.on('doneProc', function(rowCount, more, returnStatus, rows) {
                 done = more;
-                if (done) {
+                if (!done) {
                     user.rose_username = returnStatus.rose_username;
                     user.name = returnStatus.name;
                     user.email = returnStatus.email;
@@ -78,8 +78,14 @@ function fetchUser(username) {
     var user = {
         'rose_username': '',
         'name': '',
-        'email': ''
-    }
+        'email': '',
+        'signed_up': [],
+        'subscribed': [],
+        'manages': [{
+            'club_name': '',
+            'title': ''
+        }]
+    };
     return new Promise((resolve, reject) => {
         var request = new Request('fetchRegisteredUser', function(err) {
             if (err) {
@@ -89,14 +95,23 @@ function fetchUser(username) {
         request.addParameter('rose_username', TYPES.VarChar, username);
         connection.callProcedure(request);
 
-        let done = false;
-        while (!done) {
+        let done = true;
+        while (done) {
             request.on('doneProc', function(rowCount, more, returnStatus, rows) {
                 done = more;
-                if (done) {
+                if (!done) {
                     user.rose_username = returnStatus.rose_username;
                     user.name = returnStatus.name;
                     user.email = returnStatus.email;
+                    // We need to run through the 'rows', which is the rows of SQL stored procedure
+                    // I am not sure what type it is though, so I am going to assume it is an array
+                    // and go from there
+                    for (int i = 0; i < rows.length; i++) {
+                        user.signed_up.push(rows[i].clubNameSignedUp);
+                        user.subscribed.push(rows[i].clubNameSubscribed);
+                        user.manages.push(rows[i].manages.club_name, rows[i].manages.title);
+
+                    }
                 }
             });
         }
@@ -119,12 +134,12 @@ function signUpForClub(username, clubName) {
             request.addParameter('club_name', TYPES.VarChar, clubName);
             connection.callProcedure(request);
 
-            let done = false;
-            while (!done) {
+            let done = true;
+            while (done) {
                 request.on('doneproc', function(rowCount, more, returnStatus, rows) {
                     done = more;
                 });
-            };
+            }
         });
         return resolve("Signed user up for club");
     });
@@ -145,12 +160,12 @@ function subscribeToClub(username, clubName) {
             request.addParameter('club_name', TYPES.VarChar, clubName);
             connection.callProcedure(request);
 
-            let done = false;
-            while (!done) {
+            let done = true;
+            while (done) {
                 request.on('doneproc', function(rowCount, more, returnStatus, rows) {
                     done = more;
                 });
-            };
+            }
         });
         return resolve("Subscribed user to club");
     });
@@ -171,12 +186,12 @@ function leaveClub(username, clubName) {
             request.addParameter('club_name', TYPES.VarChar, clubName);
             connection.callProcedure(request);
 
-            let done = false;
-            while (!done) {
+            let done = true;
+            while (done) {
                 request.on('doneproc', function(rowCount, more, returnStatus, rows) {
                     done = more;
                 });
-            };
+            }
         });
         return resolve("User has left club");
     });
@@ -188,7 +203,24 @@ Uses the stored procedure 'signUserUpForEvent'
 Returns a string signifying the user has signed up for the event
 */
 function signUpForEvent(username, eventID) {
+    return new Promise((resolve, reject) => {
+        var request = new Request('signUserUpForEvent', function(err) {
+            if (err) {
+                return reject(err);
+            }
+            request.addParameter('rose_username', TYPES.VarChar, username);
+            request.addParameter('event_id', TYPES.VarChar, eventID);
+            connection.callProcedure(request);
 
+            let done = true;
+            while (done) {
+                request.on('doneproc', function(rowCount, more, returnStatus, rows) {
+                    done = more;
+                });
+            }
+        });
+        return resolve("Signed user up for event");
+    });
 }
 
 /*
@@ -197,7 +229,24 @@ Uses the stored procedure 'removeUserFromEvent'
 Returns a string signifying the user is no longer signed up for the event
 */
 function cancelEventParticipation(username, eventID) {
+    return new Promise((resolve, reject) => {
+        var request = new Request('removeUserFromEvent', function(err) {
+            if (err) {
+                return reject(err);
+            }
+            request.addParameter('rose_username', TYPES.VarChar, username);
+            request.addParameter('event_id', TYPES.VarChar, eventID);
+            connection.callProcedure(request);
 
+            let done = true;
+            while (done) {
+                request.on('doneproc', function(rowCount, more, returnStatus, rows) {
+                    done = more;
+                });
+            }
+        });
+        return resolve("User has left club event");
+    });
 }
 
 /*
@@ -215,7 +264,26 @@ Uses the stored procedure 'cancelClubEvent'
 Returns a string signifying the event has been cancelled
 */
 function cancelEvent(clubName, eventID) {
+    // Not sure if this has to have any other checks, like rose_username, to make sure they are a manager
+    // of that club. Shouldn't have to though because the option should only appear for club officers
+    return new Promise((resolve, reject) => {
+        var request = new Request('cancelClubEvent', function(err) {
+            if (err) {
+                return reject(err);
+            }
+            request.addParameter('club_name', TYPES.VarChar, clubName);
+            request.addParameter('event_id', TYPES.VarChar, eventID);
+            connection.callProcedure(request);
 
+            let done = true;
+            while (done) {
+                request.on('doneproc', function(rowCount, more, returnStatus, rows) {
+                    done = more;
+                });
+            }
+        });
+        return resolve("The club event has been cancelled");
+    });
 }
 
 /*

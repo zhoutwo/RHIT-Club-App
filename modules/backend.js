@@ -1,5 +1,19 @@
 const TYPES = require('tedious').TYPES;
-const connection; // Addd connection here
+const mysql = require("mysql");
+
+const connection = mysql.createConnection({
+  host: "localhost",
+  user: "",
+  password: ""
+});
+
+connection.connect(function(err) {
+  if (err) {
+    console.log('Error connecting to DB');
+    return;
+  }
+  console.log('Connection established');
+});
 
 //----------------------------------------------
 // Make sure all database column names are right

@@ -1,19 +1,5 @@
 const TYPES = require('tedious').TYPES;
-const mysql = require("mysql");
 
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "",
-  password: ""
-});
-
-connection.connect(function(err) {
-  if (err) {
-    console.log('Error connecting to DB');
-    return;
-  }
-  console.log('Connection established');
-});
 
 //----------------------------------------------
 // Make sure all database column names are right
@@ -24,7 +10,7 @@ Checks if the user is already registerd
 Uses the stored procedure 'getUserRegistered'
 Returns true if the user is registered, false if they are not
 */
-function isRegisterd(username) {
+function isRegistered(username) {
   return new Promise((resolve, reject) => {
     var request = new Request('getUserRegistered', function(err) {
       if (err) {
@@ -419,8 +405,8 @@ function setFilePathById(file_id) {
 }
 
 module.exports = {
-  isRegisterd: isRegistered,
+  isRegistered: isRegistered,
   createUser: createUser,
-  fetchUser: fetchUesr,
+  fetchUser: fetchUser,
   signUpForClub: signUpForClub
 };

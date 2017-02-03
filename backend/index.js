@@ -1,4 +1,19 @@
 const TYPES = require('tedious').TYPES;
+var Connection = require('tedious').Connection;
+var config = {
+  userName: '',
+  password: '',
+  server: 'titan.csse.rose-hulman.edu',
+};
+var connection = new Connection(config);
+connection.connect(function(err) {
+  if (err) {
+    console.log("Issue connecting to database: ", err);
+  }
+  else {
+    console.log("Connected to database");
+  }
+})
 
 
 //----------------------------------------------
@@ -107,18 +122,17 @@ function fetchUser(username) {
           user.rose_username = returnStatus.rose_username;
           user.name = returnStatus.name;
           user.email = returnStatus.email;
-                    // We need to run through the 'rows', which is the rows of SQL stored procedure
-                    // I am not sure what type it is though, so I am going to assume it is an array
-                    // and go from there
-                    for (var i = 0; i < rows.length; i++) {
-                      // Make this the right database names
-                      user.signed_up.push(rows[i].clubNameSignedUp);
-                      user.subscribed.push(rows[i].clubNameSubscribed);
-                      user.manages.push(rows[i].manages.club_name, rows[i].manages.title);
-
-                    }
-                  }
-                });
+          // We need to run through the 'rows', which is the rows of SQL stored procedure
+          // I am not sure what type it is though, so I am going to assume it is an array
+          // and go from there
+          for (var i = 0; i < rows.length; i++) {
+            // Make this the right database names
+            user.signed_up.push(rows[i].clubNameSignedUp);
+            user.subscribed.push(rows[i].clubNameSubscribed);
+            user.manages.push(rows[i].manages.club_name, rows[i].manages.title);
+          }
+        }
+      });
     }
     return resolve(user);
   });

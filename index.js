@@ -7,14 +7,14 @@ const fs = require('fs');
 const app = express();
 
 const options = {
-    key: fs.readFileSync(path.join(__dirname, '/cert/server.key')),
-    cert:  fs.readFileSync(path.join(__dirname, '/cert/server.crt'))
+  key: fs.readFileSync(path.join(__dirname, '/cert/server.key')),
+  cert:  fs.readFileSync(path.join(__dirname, '/cert/server.crt'))
 };
 
 app.get('*', (req, res) => {
-    res
-      .status(200)
-      .json({message: 'ok'})
+  res
+    .status(200)
+    .json({message: 'ok'})
 });
 
 spdy

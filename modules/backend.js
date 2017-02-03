@@ -279,11 +279,9 @@ function getClubInfo(clubName) {
             info.signedUpUser.push(rows[i].SignUpUser);
             info.subscribedUser.push(rows[i].SubscribeUser);
             info.officers.push(rows[i].rose_username, rows[i].title);
-
           }
-        })
+        });
       }
-
     });
     return resolve(info);
   });

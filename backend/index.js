@@ -124,7 +124,7 @@ function fetchUser(username) {
                     // We need to run through the 'rows', which is the rows of SQL stored procedure
                     // I am not sure what type it is though, so I am going to assume it is an array
                     // and go from there
-                    for (int i = 0; i < rows.length; i++) {
+                    for (var i = 0; i < rows.length; i++) {
                       // Make this the right database names
                       user.signed_up.push(rows[i].clubNameSignedUp);
                       user.subscribed.push(rows[i].clubNameSubscribed);
@@ -275,7 +275,7 @@ function getClubInfo(clubName) {
           info.clubType = returnStatus.club_type,
           info.clubDescription = returnStatus.description;
 
-          for (int i = 0; i < rows.length; i++) {
+          for (var i = 0; i < rows.length; i++) {
             info.signedUpUser.push(rows[i].SignUpUser);
             info.subscribedUser.push(rows[i].SubscribeUser);
             info.officers.push(rows[i].rose_username, rows[i].title);

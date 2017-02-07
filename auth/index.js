@@ -1,51 +1,36 @@
+const RFTVerifierConstructor = require('rosefire-node');
 
-function dummyVerify() {
-  return true;
+let RFTVerifier;
+
+/**
+ * Verifies whether the given token 
+ */
+function getIdentity(token) {
+  return new Promise((resolve, reject) => {
+    RFTVerifier.verify(token, (err, authData) => {
+      if (err) {
+        return reject(err);
+      }
+      let userData = {
+        username: authData.username,
+        email: authData.email,
+        name: authData.name
+      };
+      return resolve(userData);
+    })
+  })
 }
-usernameToToken = {};
-tokenToUsername = {};
-usernameToTimeout = {};
 
-function login(username, password) {
-  if (dummyVerify(username, password)) {
-    let token = generateToken();
-    usernameToToken[username] = token;
-    tokenToUsername[token] = username;
-    usernameToTimeout[username] = setTimeout(() -> {
-      logout(username);
-    });
-    return token;
-  }
-  return false;
-}
-
-function logout(username, token) {
-  if (!username) {
-    username = tokenToUsername[token];
+/**
+ * Initialize this module with the secret to connect to the database. Possibly obtained via environment variable
+ */
+module.exports = function(secret) {
+  if (RFTVerifier) {
+    throw new Error('RoseFire Token Verifier already initialized')
   } else {
-    token = usernameToToken[username];
+    RFTVerifier = new RFTVerifierConstructor(secret);
   }
-  delete usernameToToken[username];
-  delete tokenToUsername[token];
-  clearTimeout(usernameToTimeout[username]);
-  delete usernameToTimeout[username];
-}
-
-function verifyToken(username, token) {
-  if (usernameToToken[username] == token && username == tokenToUsername[token]) {
-    return true;
-  }
-  return false;
-}
-
-function generateToken() {
-  let token = Math.round(Math.random() * 1000000) + "";
-  return token;
-}
-
-module.exports = {
-  login: login,
-  logout: logout,
-  verifyToken: verifyToken,
-  generateToken: generateToken
+  return {
+    getIdentity: getIdentity
+  };
 }

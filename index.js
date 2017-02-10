@@ -1,12 +1,13 @@
 const port = process.env.port || 3000;
 const RFSecret = process.env.RFSecret || (() => {console.error("No RoseFire secret provided"); return process.exit(1)})();
+
 const spdy = require('spdy');
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 
-const auth = require('auth');
+const auth = require('./auth');
 
 const app = express();
 

@@ -13,7 +13,7 @@ function getIdentity(token) {
       }
       let userData = {
         username: authData.username,
-        email: authData.email,
+        email: authData.email || `${authData.username}@rose-hulman.edu`,
         name: authData.name
       };
       return resolve(userData);

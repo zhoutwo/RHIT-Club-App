@@ -9,6 +9,8 @@ const bodyParser = require('body-parser');
 
 const auth = require('./auth');
 
+const fileRouter = require('./file').router;
+
 const app = express();
 
 const options = {
@@ -18,6 +20,7 @@ const options = {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use("/file/", fileRouter);
 
 app.get('*', (req, res) => {
   res
@@ -26,12 +29,12 @@ app.get('*', (req, res) => {
 });
 
 spdy
-  .createServer(options, app)
-  .listen(port, (error) => {
-    if (error) {
-      console.error(error);
-      return process.exit(1);
-    } else {
-      console.log(`Server running on port ${port}`);
-    }
-  });
+.createServer(options, app)
+.listen(port, (error) => {
+  if (error) {
+    console.error(error);
+    return process.exit(1);
+  } else {
+    console.log(`Server running on port ${port}`);
+  }
+});

@@ -12,7 +12,7 @@ function getIdentity(token) {
         return reject(err);
       }
       let userData = {
-        username: authData.username,
+        rose_username: authData.username,
         email: authData.email || `${authData.username}@rose-hulman.edu`,
         name: authData.name
       };
@@ -21,16 +21,18 @@ function getIdentity(token) {
   })
 }
 
+const toExport = {
+  getIdentity: getIdentity
+};
 /**
  * Initialize this module with the secret to connect to the database. Possibly obtained via environment variable
  */
 module.exports = function(secret) {
-  if (RFTVerifier) {
-    throw new Error('RoseFire Token Verifier already initialized')
-  } else {
+  if (!RFTVerifier) {
+    if (!secret) {
+      throw new Error('You must specify a secret!');
+    }
     RFTVerifier = new RFTVerifierConstructor(secret);
   }
-  return {
-    getIdentity: getIdentity
-  };
+  return toExport;
 }
